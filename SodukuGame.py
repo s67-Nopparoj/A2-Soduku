@@ -19,7 +19,19 @@ def draw_grid(canvas, win_width, win_height):
         canvas.create_rectangle(i * (win_width / 9), 0, i * (win_width / 9), win_height, fill="black", width=1)
         canvas.create_rectangle(0, i * (win_height / 9), win_width, i * (win_height / 9), fill="black", width=1)
 
+def single_digit_number(char):
+    return char.isdigit() and len(char) == 1 or char == ""
+
+def create_entrybox():
+    for i in range(9):
+        for j in range(9):
+            single_digit = game.register(single_digit_number)
+            entry = Entry(game, width=2, font=('Arial', 24), justify='center', validate='key', validatecommand=(single_digit, '%P'))
+            entry.place(x=i * (win_width / 9) + 10, y=j * (win_height / 9) + 10)
+            cells.append(entry)
+
 draw_grid(canvas, win_width, win_height)
+create_entrybox()
 
 canvas.pack()
 game.mainloop()
