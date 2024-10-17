@@ -1,4 +1,5 @@
 from tkinter import *
+import random
 
 game = Tk()
 game.title("Sudoku Game")
@@ -29,9 +30,41 @@ def create_entrybox():
             entry = Entry(game, width=2, font=('Arial', 24), justify='center', validate='key', validatecommand=(single_digit, '%P'))
             entry.place(x=i * (win_width / 9) + 10, y=j * (win_height / 9) + 10)
             cells.append(entry)
+            
+def check_number(cells, row, col, num):
+    for i in range(9):
+        if cells[row * 9 + i].get() == str(num):
+            return False
+    
+    for i in range(9):
+        if cells[i * 9 + col].get() == str(num):
+            return False
+    
+    start_row = (row // 3) * 3
+    start_col = (col // 3) * 3
+    for i in range(3):
+        for j in range(3):
+            if cells[(start_row + i) * 9 + (start_col + j)].get() == str(num):
+                return False
+            
+    return True
+
+def fill_random_number(num_cells):
+    count = 0
+    while count < num_cells:
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+
+        if cells[row * 9 + col].get() == "":
+            num = random.randint(1, 9)
+            if check_number(cells, row, col, num):
+                cells[row * 9 + col].insert(0, str(num))
+                cells[row * 9 + col].config(state='disabled')
+                count += 1
 
 draw_grid(canvas, win_width, win_height)
 create_entrybox()
+fill_random_number(30)
 
 canvas.pack()
 game.mainloop()
