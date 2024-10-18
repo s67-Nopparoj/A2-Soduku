@@ -62,9 +62,22 @@ def fill_random_number(num_cells):
                 cells[row * 9 + col].config(state='disabled')
                 count += 1
 
+def check_solution():
+    for row in range(9):
+        for col in range(9):
+            num = cells[row * 9 + col].get()
+            if num == "":
+                return False
+            if not check_number(cells, row, col, int(num)):
+                return False
+    return True
+
+check_button = Button(game, text="Check Solution", command=lambda: print("Correct!" if check_solution() else "Incorrect!"))
+check_button.pack(side='bottom', pady=10)
+
 draw_grid(canvas, win_width, win_height)
 create_entrybox()
-fill_random_number(30)
+fill_random_number(50)
 
 canvas.pack()
 game.mainloop()
