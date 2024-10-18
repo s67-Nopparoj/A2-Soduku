@@ -51,16 +51,16 @@ def check_number(cells, row, col, num):
 
 def fill_random_number(num_cells):
     count = 0
+    fill_position = set()
     while count < num_cells:
         row = random.randint(0, 8)
         col = random.randint(0, 8)
 
-        if cells[row * 9 + col].get() == "":
-            num = random.randint(1, 9)
-            if check_number(cells, row, col, num):
-                cells[row * 9 + col].insert(0, str(num))
-                cells[row * 9 + col].config(state='disabled')
-                count += 1
+        if (row, col) not in fill_position:
+            cells[row * 9 + col].insert(0, str(solution[row][col]))
+            cells[row * 9 + col].config(state='disabled')
+            fill_position.add((row, col))
+            count += 1
 
 def check_solution():
     for row in range(9):
@@ -68,7 +68,7 @@ def check_solution():
             num = cells[row * 9 + col].get()
             if num == "":
                 return False
-            if not check_number(cells, row, col, int(num)):
+            if int(num) != solution[row][col]:
                 return False
     return True
 
@@ -90,7 +90,7 @@ def show_solution():
             if cells[row * 9 + col].get() == "":
                 cells[row * 9 + col].insert(0, str(solution[row][col]))
                 cells[row * 9 + col].config(state='disabled')
-                
+
 def reset_game():
     for cell in cells:
         cell.config(state='normal')
