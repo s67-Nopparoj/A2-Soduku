@@ -72,8 +72,30 @@ def check_solution():
                 return False
     return True
 
+solution = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+    [2, 3, 4, 5, 6, 7, 8, 9, 1],
+    [5, 6, 7, 8, 9, 1, 2, 3, 4],
+    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+    [3, 4, 5, 6, 7, 8, 9, 1, 2],
+    [6, 7, 8, 9, 1, 2, 3, 4, 5],
+    [9, 1, 2, 3, 4, 5, 6, 7, 8]
+]
+
+def show_solution():
+    for row in range(9):
+        for col in range(9):
+            if cells[row * 9 + col].get() == "":
+                cells[row * 9 + col].insert(0, str(solution[row][col]))
+                cells[row * 9 + col].config(state='disabled')
+
 check_button = Button(game, text="Check Solution", command=lambda: print("Correct!" if check_solution() else "Incorrect!"))
 check_button.pack(side='bottom', pady=10)
+
+show_solution_button = Button(game, text="Show Solution", command=show_solution)
+show_solution_button.pack(side='bottom', pady=10)
 
 draw_grid(canvas, win_width, win_height)
 create_entrybox()
