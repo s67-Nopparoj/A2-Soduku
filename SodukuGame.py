@@ -90,12 +90,21 @@ def show_solution():
             if cells[row * 9 + col].get() == "":
                 cells[row * 9 + col].insert(0, str(solution[row][col]))
                 cells[row * 9 + col].config(state='disabled')
+                
+def reset_game():
+    for cell in cells:
+        cell.config(state='normal')
+        cell.delete(0, 'end')
+    fill_random_number(50)
 
 check_button = Button(game, text="Check Solution", command=lambda: print("Correct!" if check_solution() else "Incorrect!"))
 check_button.pack(side='bottom', pady=10)
 
 show_solution_button = Button(game, text="Show Solution", command=show_solution)
 show_solution_button.pack(side='bottom', pady=10)
+
+reset_button = Button(game, text="Reset", command=reset_game)
+reset_button.pack(side='bottom', pady=10)
 
 draw_grid(canvas, win_width, win_height)
 create_entrybox()
