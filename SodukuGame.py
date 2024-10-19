@@ -6,11 +6,13 @@ game.title("Sudoku Game")
 game.geometry("550x700")
 
 start_frame = Frame(game)
+difficulty_frame = Frame(game)
 game_frame = Frame(game)
 
-for frame in (start_frame, game_frame):
+for frame in (start_frame, difficulty_frame, game_frame):
     frame.grid(row=0, column=0, sticky='nsew')
-    
+
+difficulty_level = None
 win_width = 550
 win_height = 550
 cells = []
@@ -106,11 +108,17 @@ def reset_game():
     for cell in cells:
         cell.config(state='normal')
         cell.delete(0, 'end')
-    fill_random_number(50)
+    fill_random_number(difficulty_level)
     result_label.config(text="")
     
 def show_frame(frame):
     frame.tkraise()
+    
+def select_difficulty(level):
+    global difficulty_level
+    difficulty_level = level
+    reset_game()
+    show_frame(game_frame)  
 
 button_frame = Frame(game_frame)
 button_frame.grid(row=10, column=0, columnspan=9, pady=20)
@@ -128,14 +136,18 @@ result_label = Label(game_frame, text="", font=('Arial', 16))
 result_label.grid(row=11, column=0, columnspan=9, pady=20)
 
 Label(start_frame, text="Sudoku Game !!", font=('Arial', 40)).pack(pady=100)
-start_button = Button(start_frame, text="Start Game", font=('Arial', 25), command=lambda: show_frame(game_frame))
+start_button = Button(start_frame, text="Start Game", font=('Arial', 25), command=lambda: show_frame(difficulty_frame))
 start_button.pack(pady=10)
 
 quit_button = Button(start_frame, text="Quit", font=('Arial', 25), command=game.quit)
 quit_button.pack(pady=10)
 
+Label(difficulty_frame, text="Select Difficulty", font=('Arial', 40)).pack(pady=100)
+Button(difficulty_frame, text="Easy", font=('Arial', 25), command=lambda: select_difficulty(50)).pack(pady=10)
+Button(difficulty_frame, text="Medium", font=('Arial', 25), command=lambda: select_difficulty(40)).pack(pady=10)
+Button(difficulty_frame, text="Hard", font=('Arial', 25), command=lambda: select_difficulty(30)).pack(pady=10)
+
 show_frame(start_frame)
 draw_grid(canvas)
 create_entrybox()
-fill_random_number(50)
 game.mainloop()
