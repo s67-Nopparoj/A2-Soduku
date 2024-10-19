@@ -19,7 +19,7 @@ cells = []
 
 canvas = Canvas(game_frame, width=win_width, height=win_height)
 canvas.grid(row=0, column=0, columnspan=9)
-    
+
 def draw_grid(canvas):
     for i in range(4):
         canvas.create_line(i * (win_width / 3), 0, i * (win_width / 3), win_height, fill="black", width=5)
@@ -40,22 +40,37 @@ def create_entrybox():
             entry.place(x=i * (win_width / 9) + 10, y=j * (win_height / 9) + 10)
             cells.append(entry)
 
-def check_number(cells, row, col, num):
+def check_number(board, row, col, num):
     for i in range(9):
-        if cells[row * 9 + i].get() == str(num):
+        if board[row][i] == num or board[i][col] == num:
             return False
-    
-    for i in range(9):
-        if cells[i * 9 + col].get() == str(num):
-            return False
-    
     start_row = (row // 3) * 3
     start_col = (col // 3) * 3
     for i in range(3):
         for j in range(3):
-            if cells[(start_row + i) * 9 + (start_col + j)].get() == str(num):
+            if board[start_row + i][start_col + j] == num:
                 return False
     return True
+
+def random_number(board):
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] == 0:
+                nums = list(range(1, 10))
+                random.shuffle(nums)
+                for num in nums:
+                    if check_number(board, row, col, num):
+                        board[row][col] = num
+                        if random_number(board):
+                            return True
+                        board[row][col] = 0
+                return False
+    return True
+
+def generate_finish_board():
+    board = [[0 for _ in range(9)] for _ in range(9)]
+    random_number(board)
+    return board
 
 def fill_random_number(num_cells):
     count = 0
@@ -63,7 +78,7 @@ def fill_random_number(num_cells):
     while count < num_cells:
         row = random.randint(0, 8)
         col = random.randint(0, 8)
-        if (row, col) not in fill_position:
+        if (row, col) not in fill_position and cells[row * 9 + col].get() == "":
             cells[row * 9 + col].insert(0, str(solution[row][col]))
             cells[row * 9 + col].config(state='disabled')
             fill_position.add((row, col))
@@ -85,18 +100,6 @@ def update_result():
     else:
         result_label.config(text="Incorrect!", fg="red")
 
-solution = [
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    [4, 5, 6, 7, 8, 9, 1, 2, 3],
-    [7, 8, 9, 1, 2, 3, 4, 5, 6],
-    [2, 3, 4, 5, 6, 7, 8, 9, 1],
-    [5, 6, 7, 8, 9, 1, 2, 3, 4],
-    [8, 9, 1, 2, 3, 4, 5, 6, 7],
-    [3, 4, 5, 6, 7, 8, 9, 1, 2],
-    [6, 7, 8, 9, 1, 2, 3, 4, 5],
-    [9, 1, 2, 3, 4, 5, 6, 7, 8]
-]
-
 def show_solution():
     for row in range(9):
         for col in range(9):
@@ -105,20 +108,22 @@ def show_solution():
                 cells[row * 9 + col].config(state='disabled')
 
 def reset_game():
+    global solution
+    solution = generate_finish_board()
     for cell in cells:
         cell.config(state='normal')
         cell.delete(0, 'end')
     fill_random_number(difficulty_level)
     result_label.config(text="")
-    
+
 def show_frame(frame):
     frame.tkraise()
-    
+
 def select_difficulty(level):
     global difficulty_level
     difficulty_level = level
     reset_game()
-    show_frame(game_frame)  
+    show_frame(game_frame)
 
 button_frame = Frame(game_frame)
 button_frame.grid(row=10, column=0, columnspan=9, pady=20)
