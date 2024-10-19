@@ -5,13 +5,19 @@ game = Tk()
 game.title("Sudoku Game")
 game.geometry("550x700")
 
+start_frame = Frame(game)
+game_frame = Frame(game)
+
+for frame in (start_frame, game_frame):
+    frame.grid(row=0, column=0, sticky='nsew')
+    
 win_width = 550
 win_height = 550
 cells = []
 
-canvas = Canvas(game, width=win_width, height=win_height)
+canvas = Canvas(game_frame, width=win_width, height=win_height)
 canvas.grid(row=0, column=0, columnspan=9)
-
+    
 def draw_grid(canvas):
     for i in range(4):
         canvas.create_line(i * (win_width / 3), 0, i * (win_width / 3), win_height, fill="black", width=5)
@@ -28,7 +34,7 @@ def create_entrybox():
     for i in range(9):
         for j in range(9):
             single_digit = game.register(single_digit_number)
-            entry = Entry(game, width=2, font=('Arial', 24), justify='center', validate='key', validatecommand=(single_digit, '%P'))
+            entry = Entry(game_frame, width=2, font=('Arial', 24), justify='center', validate='key', validatecommand=(single_digit, '%P'))
             entry.place(x=i * (win_width / 9) + 10, y=j * (win_height / 9) + 10)
             cells.append(entry)
 
@@ -102,22 +108,33 @@ def reset_game():
         cell.delete(0, 'end')
     fill_random_number(50)
     result_label.config(text="")
+    
+def show_frame(frame):
+    frame.tkraise()
 
-button_frame = Frame(game)
+button_frame = Frame(game_frame)
 button_frame.grid(row=10, column=0, columnspan=9, pady=20)
 
-check_button = Button(button_frame, text="Check Answer", command=update_result, padx=20, pady=10, font=('Arial', 10))
+check_button = Button(button_frame, text="Check Answer", command=update_result, padx=20, pady=10, font=('Arial', 14))
 check_button.grid(row=0, column=0, padx=15)
 
-show_solution_button = Button(button_frame, text="Show Answer", command=show_solution, padx=20, pady=10, font=('Arial', 10))
+show_solution_button = Button(button_frame, text="Show Answer", command=show_solution, padx=20, pady=10, font=('Arial', 14))
 show_solution_button.grid(row=0, column=1, padx=20)
 
-reset_button = Button(button_frame, text="Reset", command=reset_game, padx=20, pady=10, font=('Arial', 10))
+reset_button = Button(button_frame, text="Reset", command=reset_game, padx=20, pady=10, font=('Arial', 14))
 reset_button.grid(row=0, column=2, padx=15)
 
-result_label = Label(game, text="", font=('Arial', 16))
-result_label.grid(row=11, column=0, columnspan=9, pady=15)
+result_label = Label(game_frame, text="", font=('Arial', 16))
+result_label.grid(row=11, column=0, columnspan=9, pady=20)
 
+Label(start_frame, text="Sudoku Game !!", font=('Arial', 40)).pack(pady=100)
+start_button = Button(start_frame, text="Start Game", font=('Arial', 25), command=lambda: show_frame(game_frame))
+start_button.pack(pady=10)
+
+quit_button = Button(start_frame, text="Quit", font=('Arial', 25), command=game.quit)
+quit_button.pack(pady=10)
+
+show_frame(start_frame)
 draw_grid(canvas)
 create_entrybox()
 fill_random_number(50)
